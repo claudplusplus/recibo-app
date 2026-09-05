@@ -1,0 +1,14 @@
+# important variables
+.env
+.env.local
+
+# dependencies
+node_modules/
+
+# build output
+dist/
+build/
+
+# os
+.DS_Store
+Thumbs.db
