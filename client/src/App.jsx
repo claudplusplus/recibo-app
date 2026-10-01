@@ -1,10 +1,10 @@
-import RegisterForm from './RegisterForm';
+import LoginForm from './LoginForm';
 
 function App() {
   return (
     <div>
       <h1>
-        <RegisterForm />
+        <LoginForm />
       </h1>
     </div>
   )

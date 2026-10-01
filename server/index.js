@@ -4,10 +4,13 @@ const bcrypt = require('bcrypt'); // for hashing
 const express = require('express'); // for creating the server
 const cors = require('cors'); // for handling cross-origin reqs
 const { Pool } = require('pg'); // to connect to the pg db
+const jwt = require('jsonwebtoken'); // maybe for jwt
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+const jwtSecret = process.env.JWT_SECRET;
 
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -31,6 +34,46 @@ app.get('/api/health', async (req, res) => {
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });
+
+// login user
+app.post('/api/login', async (req,res) => {
+  try {
+    // get the email and password
+    const { email, password } = req.body;
+
+    // if no email or password entered, return 400 error msg
+    if (!email || !password) {
+      return res.status(400).json({ error: 'No email or password entered'})
+    }
+
+    // check if it exists then let the user proceed if verified
+    const existingUser = await pool.query(
+      'SELECT id, email, password_hash FROM users WHERE email = $1',
+      [email]
+    )
+    
+    // check if user exists
+    if (existingUser.rows.lenghth === 0) {
+      return res.status(401).json({ error: 'Invalid username or password'});
+    }
+
+    const user = existingUser.rows[0] // pg library always returns an object with a 'rows' property
+
+    // compare passwords
+    const isMatch = bcrypt.compare(password, user.password_hash);
+    if (isMatch) {
+      const token = jwt.sign({id: user.id}, jwtSecret, { expiresIn: '1h'});
+      res.status(200).json({
+        message: 'Successfuly logged in.',
+        user: email,
+        token: token
+      })
+    }
+  } catch (err) {
+    console.error("Login Error:", err);
+    res.status(500).json({ error: 'Internal server error test3'});
+  }
+})
 
 // register new user
 app.post('/api/register', async (req, res) => {

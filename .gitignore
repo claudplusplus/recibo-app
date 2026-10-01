@@ -12,3 +12,4 @@ build/
 # os
 .DS_Store
 Thumbs.db
+.postman

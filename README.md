@@ -12,6 +12,6 @@
 ~~- build a simple react form to send an email/password to that route~~
 ~~- save the user to the database~~
 - Build POST /api/auth/login route
-- Implement JWT token generation
+- Implement JWT token generation  
 - Create login form in React
 - Protect routes with authentication middleware
