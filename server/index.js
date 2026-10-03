@@ -53,14 +53,14 @@ app.post('/api/login', async (req,res) => {
     )
     
     // check if user exists
-    if (existingUser.rows.lenghth === 0) {
+    if (existingUser.rows.lenght === 0) {
       return res.status(401).json({ error: 'Invalid username or password'});
     }
 
     const user = existingUser.rows[0] // pg library always returns an object with a 'rows' property
 
     // compare passwords
-    const isMatch = bcrypt.compare(password, user.password_hash);
+    const isMatch = await bcrypt.compare(password, user.password_hash);
     if (isMatch) {
       const token = jwt.sign({id: user.id}, jwtSecret, { expiresIn: '1h'});
       res.status(200).json({
@@ -114,3 +114,28 @@ app.post('/api/register', async (req, res) => {
 
 }
 )
+
+function verifyToken(req, res, next) {
+  const authHeader = req.headers['authorization']; // tanan headers kay naka lower case. time wasted (30mins)
+
+  // check if bearer token exists and starts with 'Bearer' also if it has space after bearer
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Access denied. No token provided'})
+  }
+
+  // extract the token
+  const bearer = authHeader.split(" ")[1];
+  try {
+    const decoded = jwt.verify(bearer, jwtSecret)
+    console.log(decoded) //test
+    req.user = decoded; // attach user payload (id, iat, exp)
+    next(); // pass control to the next route handler
+  } catch (err) {
+    res.status(401).json({ error: 'Access denied. Token is unverified or expired.'})
+  }
+}
+
+app.get('/api/test-protected', verifyToken, (req, res) => {
+
+  res.status(200).json({ message: `Congrats! You are authenticated. User ID: ${req.user.id}`});
+})

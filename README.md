@@ -11,10 +11,10 @@
 - [x] Create login form in React
 
 ## goal for this week
-~~- build the POST '/api/users' route to register a new user~~
-~~- build a simple react form to send an email/password to that route~~
-~~- save the user to the database~~
-~~- Build POST /api/auth/login route~~
+~~- build the POST '/api/users' route to register a new user~~ 
+~~- build a simple react form to send an email/password to that route~~ 
+~~- save the user to the database~~ 
+~~- Build POST /api/auth/login route~~ 
 ~~- Implement JWT token generation~~  
 ~~- Create login form in React~~
 - Protect routes with authentication middleware

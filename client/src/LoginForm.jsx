@@ -33,7 +33,7 @@ const [isLoading, setIsLoading] = useState(false); // state variable to track lo
       }
     } catch (err) {
       console.error('Login error:', err); // para debugging and pawala sa pula sa linting error
-      setMessage('Failed to connect to the server. Try again laterasdf.');
+      setMessage('Failed to connect to the server. Try again later.');
     } finally {
       setIsLoading(false); // set loading state to false
     }
